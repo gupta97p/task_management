@@ -85,7 +85,7 @@ DATABASES = {
         'NAME': 'task_app',
         'USER': 'piyushgupta',
         'PASSWORD': 'piyush',
-        'HOST': 'localhost',
+        'HOST': 'host.docker.internal',
         'PORT': '9011',
     }
 }

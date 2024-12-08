@@ -88,7 +88,7 @@ class TaskViewSet(ViewSet):
         if not serializer.is_valid():
                 return Response({'status': 'failed', 'data': {'message': serializer.errors}}, status=422)
         serializer.save()
-        return Response({"status": "success", "data": serializer.data}, 200)
+        return Response({"status": "success", "data": serializer.data}, status=201)
 
     def patch(self, request, pk=None):
         """

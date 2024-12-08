@@ -1,6 +1,6 @@
 import string
 from rest_framework import serializers
-from .models import userReg
+from .models import userReg, Task
 
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
@@ -44,3 +44,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         account.set_password(password)
         account.save()
         return account
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = '__all__'

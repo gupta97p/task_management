@@ -18,3 +18,25 @@ class userReg(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class Task(models.Model):
+    TASK_STATUS = [
+        ('Pending', 'Pending'),
+        ('In Progress', 'In Progress'),
+        ('Completed', 'Completed'),
+    ]
+
+    user = models.ForeignKey(userReg, on_delete=models.CASCADE, related_name='users_tasks')
+    task_name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    due_date = models.DateField()
+    status = models.CharField(max_length=50, choices=TASK_STATUS, default='Pending')
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.task_name
+
+

@@ -1,13 +1,23 @@
 from django.contrib.auth import authenticate
 
-from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import Task, userReg
-from .serializers import *
+from .serializers import RegisterSerializer, TaskSerializer
+from .filters import TaskFilter
+from .pagination import CustomPagination
+
+
+# Local Application Imports
+from .filters import TaskFilter
+from .models import Task, userReg
+from .pagination import CustomPagination
+from .serializers import RegisterSerializer, TaskSerializer
+
 
 def generate_jwt_token(user):
     refresh = RefreshToken.for_user(user)
@@ -49,10 +59,16 @@ class TaskViewSet(ViewSet):
 
     def list(self, request):
         user = userReg.objects.get(id=request.user.id)
-        queryset = Task.objects.filter(user=user, is_active=True)
+        queryset = Task.objects.filter(user=user, is_active=True).order_by('created_at')
 
-        # Serialize the filtered queryset
-        serializer = TaskSerializer(queryset, many=True)
+        filterset = TaskFilter(request.GET, queryset=queryset)
+        if not filterset.is_valid():
+            return Response({"errors": filterset.errors}, status=400)
+        filtered_queryset = filterset.qs
+        paginator = CustomPagination()
+        paginated_queryset = paginator.paginate_queryset(filtered_queryset, request)
+
+        serializer = TaskSerializer(paginated_queryset, many=True)
         return Response(serializer.data, status=200)
 
     
